@@ -18,10 +18,10 @@ void main() async {
   
   await initializeDateFormatting('es', null);
 
-  // 1. Inicializar Time Zones (requiere 'await' y debe ir antes de inicializar el plugin)
-  await NotificationService.init(); // <-- 🔑 Correcto.
-
-  // 2. --- Inicialización de Notificaciones (Asignando a la variable global) ---
+  // 1. Inicializar Time Zones (¡AQUÍ VA CON AWAIT, Y ES LA ÚNICA LLAMADA!)
+  await NotificationService.init(); // <--- 🔑 AWAIT Y POSICIÓN CORRECTA
+  
+  // 2. --- Inicialización de Notificaciones ---
   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   const AndroidInitializationSettings initializationSettingsAndroid =
@@ -52,8 +52,7 @@ void main() async {
       ?.requestNotificationsPermission();
   // --- FIN Inicialización de Notificaciones ---
 
-
-  // 🔑 Eliminada la llamada duplicada y mal ubicada a NotificationService.init()
+  // ❌ IMPORTANTE: LA LLAMADA DUPLICADA Y MAL UBICADA HA SIDO ELIMINADA.
 
 
   // 3. Inicialización de Hive

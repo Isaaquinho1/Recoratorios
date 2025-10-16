@@ -3,7 +3,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:flutter_timezone/flutter_timezone.dart'; // <--- 🔑 Importación requerida
+import 'package:flutter_timezone/flutter_timezone.dart';
 import '../models/task.dart'; 
 
 class NotificationService {
@@ -12,11 +12,9 @@ class NotificationService {
   static Future<void> init() async { 
     tz.initializeTimeZones();
     try {
-      // OBTENER y ESTABLECER la zona horaria local del dispositivo
       final String timeZoneName = await FlutterTimezone.getLocalTimezone();
       tz.setLocalLocation(tz.getLocation(timeZoneName));
     } catch (e) {
-      // Fallback por si la obtención falla (ej. para pruebas)
       tz.setLocalLocation(tz.getLocation('America/New_York'));
     }
   }
@@ -57,7 +55,7 @@ class NotificationService {
 
     final scheduledTime = task.dueDate.subtract(Duration(minutes: minutesBefore));
     
-    // Lógica para notificar inmediatamente si la hora ya pasó, a menos que la tarea esté en el futuro.
+    // Lógica para notificar inmediatamente si la hora ya pasó.
     if (scheduledTime.isBefore(DateTime.now())) {
       return task.dueDate.isBefore(DateTime.now()) 
           ? DateTime.now().add(const Duration(seconds: 5)) 
@@ -97,7 +95,7 @@ class NotificationService {
       iOS: iOSDetails,
     );
 
-    // Si la repetición es "Ninguno", programamos una sola vez.
+    // Si la repetición es "Ninguno", programamos una sola vez (zonedSchedule).
     if (task.repetitionFrequency == 'Ninguno') {
       await notificationsPlugin.zonedSchedule( 
         id,
@@ -105,11 +103,13 @@ class NotificationService {
         'Tu tarea está programada para las ${task.dueDate.hour}:${task.dueDate.minute.toString().padLeft(2, '0')}. ¡Vamos por ello!',
         tzTime,
         notificationDetails,
-
+        
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, 
+        // ❌ ELIMINADO: uiLocalNotificationDateInterpretation (No existe en tu versión)
+        // ❌ ELIMINADO: matchDateTimeComponents (No existe en tu versión)
       );
     } else {
-      // PROGRAMACIÓN CON REPETICIÓN
+      // PROGRAMACIÓN CON REPETICIÓN (periodicallyShow).
       final RepeatInterval repeatInterval;
       
       switch (task.repetitionFrequency) {
@@ -129,6 +129,8 @@ class NotificationService {
         'Recordatorio diario/semanal de tu tarea. ¡No la olvides!',
         repeatInterval,
         notificationDetails,
+        
+        // 🔑 AÑADIDO: androidScheduleMode es requerido en periodicallyShow en tu versión
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       );
     }
