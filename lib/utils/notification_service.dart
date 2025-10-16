@@ -19,7 +19,7 @@ class NotificationService {
     }
   }
 
-  // 2. Función para calcular la hora de notificación (LÓGICA CORRECTA)
+  // 2. Función para calcular la hora de notificación (sin cambios)
   static DateTime _calculateNotificationTime(Task task) {
     if (task.reminderInterval == 'Ninguno') {
       return task.dueDate;
@@ -55,7 +55,6 @@ class NotificationService {
 
     final scheduledTime = task.dueDate.subtract(Duration(minutes: minutesBefore));
     
-    // Lógica para notificar inmediatamente si la hora ya pasó.
     if (scheduledTime.isBefore(DateTime.now())) {
       return task.dueDate.isBefore(DateTime.now()) 
           ? DateTime.now().add(const Duration(seconds: 5)) 
@@ -95,7 +94,7 @@ class NotificationService {
       iOS: iOSDetails,
     );
 
-    // Si la repetición es "Ninguno", programamos una sola vez (zonedSchedule).
+    // Notificación única (zonedSchedule)
     if (task.repetitionFrequency == 'Ninguno') {
       await notificationsPlugin.zonedSchedule( 
         id,
@@ -103,13 +102,12 @@ class NotificationService {
         'Tu tarea está programada para las ${task.dueDate.hour}:${task.dueDate.minute.toString().padLeft(2, '0')}. ¡Vamos por ello!',
         tzTime,
         notificationDetails,
-        
+
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, 
-        // ❌ ELIMINADO: uiLocalNotificationDateInterpretation (No existe en tu versión)
-        // ❌ ELIMINADO: matchDateTimeComponents (No existe en tu versión)
+        // ❌ ELIMINADO: Parámetros obsoletos que causaban el error de compilación.
       );
     } else {
-      // PROGRAMACIÓN CON REPETICIÓN (periodicallyShow).
+      // Notificación recurrente (periodicallyShow)
       final RepeatInterval repeatInterval;
       
       switch (task.repetitionFrequency) {
@@ -130,7 +128,7 @@ class NotificationService {
         repeatInterval,
         notificationDetails,
         
-        // 🔑 AÑADIDO: androidScheduleMode es requerido en periodicallyShow en tu versión
+        // 🔑 AÑADIDO: Parámetro obligatorio para tu versión
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       );
     }

@@ -57,5 +57,9 @@
 <array>
     <string>processing</string>
 </array>
+<key>BGTaskSchedulerPermittedIdentifiers</key>
+<array>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER).task</string>
+</array>
 </dict>
 </plist>

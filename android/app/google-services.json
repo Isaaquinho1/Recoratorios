@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "48699977123",
+    "project_id": "recordatorio-tareas",
+    "storage_bucket": "recordatorio-tareas.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:48699977123:android:2b7a2ce046b6ff9f18fe16",
+        "android_client_info": {
+          "package_name": "com.example.inicio_home_reminder_prueba1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHBvcjD6ne4SyowOnYJiZS0u0H_NZARaU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

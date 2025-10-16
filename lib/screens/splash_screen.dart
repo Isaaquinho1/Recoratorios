@@ -43,9 +43,14 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   // Función para verificar el estado de la sesión
   void _checkSessionAndNavigate() async {
-    final authBox = Hive.box<bool>('authBox');
-    final isLoggedIn = authBox.get('isLoggedIn') ?? false;
-    final userName = authBox.get('userName') ?? 'Estudiante'; // Default si no hay nombre
+    // 🔑 CORRECCIÓN: Acceder a la caja como Box<dynamic> para que Hive no lance error
+    //             y pueda manejar el String (userName) y el booleano.
+    final authBox = Hive.box<dynamic>('authBox'); 
+    
+    // El método .get() aún requiere especificar el tipo por seguridad,
+    // usando la función as<Tipo>() o proporcionando el valor por defecto.
+    final isLoggedIn = authBox.get('isLoggedIn', defaultValue: false) as bool;
+    final userName = authBox.get('userName', defaultValue: 'Estudiante'); 
     
     // Simular un tiempo mínimo de visualización del splash
     await Future.delayed(const Duration(milliseconds: 500)); 
@@ -53,7 +58,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     Widget destinationScreen;
 
     if (isLoggedIn) {
-      destinationScreen = HomeScreen(userName: userName as String);
+      // Nota: Aquí se lanza un error si userName no es String, pero tu lógica Hive ya lo asegura
+      destinationScreen = HomeScreen(userName: userName as String); 
     } else {
       destinationScreen = const LoginPage();
     }
